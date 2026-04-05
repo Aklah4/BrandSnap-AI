@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BrandSnap AI - Flyer Results</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Mono&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #0e0e0e;
+      color: #f0f0f0;
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .page { max-width: 1100px; margin: 0 auto; }
+
+    /* ── Top nav ── */
+    .topnav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 3rem;
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      background-color: #c8ff00;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-logo svg { width: 20px; height: 20px; }
+    .brand-name { font-size: 1.1rem; font-weight: 700; color: #f0f0f0; letter-spacing: -0.02em; }
+
+    .nav-links { display: flex; align-items: center; gap: 1rem; }
+
+    .nav-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: #555;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .nav-link:hover { color: #c8ff00; }
+
+    /* ── Page header ── */
+    .page-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .page-header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+
+    .page-header h1 span { color: #c8ff00; }
+
+    .page-header p {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: #555;
+      margin-top: 0.3rem;
+    }
+
+    /* ── Partial failure note ── */
+    .fail-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: #ff6b6b;
+      background-color: rgba(255, 107, 107, 0.07);
+      border: 1px solid rgba(255, 107, 107, 0.2);
+      border-radius: 10px;
+      padding: 0.6rem 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Flyer grid ── */
+    .flyer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) { .flyer-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .flyer-grid { grid-template-columns: 1fr; } }
+
+    /* ── Flyer card ── */
+    .flyer-card {
+      background-color: #141414;
+      border: 1px solid #222;
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.15s;
+    }
+
+    .flyer-card:hover { border-color: #333; }
+
+    .flyer-card.failed {
+      border: 1px dashed #2a2a2a;
+      background-color: #111;
+    }
+
+    .flyer-image-wrap {
+      position: relative;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      background-color: #1a1a1a;
+    }
+
+    .flyer-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .flyer-error-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: #333;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .flyer-error-placeholder svg { width: 28px; height: 28px; color: #2a2a2a; }
+
+    /* ── Card body ── */
+    .flyer-body {
+      padding: 1.2rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .style-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: #444;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .style-name {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #f0f0f0;
+    }
+
+    .style-name.failed-label { color: #444; }
+
+    /* ── Action row ── */
+    .action-row {
+      display: flex;
+      gap: 8px;
+      border-top: 1px solid #1e1e1e;
+      padding-top: 1rem;
+    }
+
+    .action-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 0.55rem 0;
+      background-color: #0e0e0e;
+      color: #888;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .action-btn:hover { border-color: #c8ff00; color: #c8ff00; }
+    .action-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .action-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+    /* ── Generate Again ── */
+    .bottom-bar {
+      margin-top: 2.5rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .regen-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.75rem 1.5rem;
+      background-color: transparent;
+      color: #c8ff00;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: 1px solid #c8ff00;
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.15s, color 0.15s;
+    }
+
+    .regen-btn:hover { background-color: #c8ff00; color: #0e0e0e; }
+    .regen-btn svg { width: 15px; height: 15px; }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center;
+      padding: 5rem 2rem;
+      border: 1px dashed #2a2a2a;
+      border-radius: 16px;
+    }
+
+    .empty-state h2 { font-size: 1.2rem; font-weight: 700; color: #f0f0f0; margin-bottom: 0.5rem; }
+
+    .empty-state p {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      color: #555;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- SVG sprite -->
+<svg style="display:none" aria-hidden="true">
+  <symbol id="icon-download" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M3 13h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="icon-fix" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2 8h2l2-5 3 10 2-5h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="icon-regen" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M13.5 2.5A6.5 6.5 0 1 1 7 1M7 1L4 4m3-3l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+</svg>
+
+<div class="page">
+
+  <!-- Top nav -->
+  <nav class="topnav">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="7" height="7" rx="2" fill="#0e0e0e"/>
+          <rect x="11" y="2" width="7" height="7" rx="2" fill="#0e0e0e"/>
+          <rect x="2" y="11" width="7" height="7" rx="2" fill="#0e0e0e"/>
+          <circle cx="14.5" cy="14.5" r="3.5" fill="#0e0e0e"/>
+        </svg>
+      </div>
+      <span class="brand-name">BrandSnap AI</span>
+    </div>
+    <div class="nav-links">
+      <a href="/dashboard" class="nav-link">Dashboard</a>
+      <a href="/logout" class="nav-link">Log out</a>
+    </div>
+  </nav>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <h1>Flyers for <span>{{ brand }}</span></h1>
+      <p>{{ generated }}/{{ total }} flyers generated</p>
+    </div>
+    <a href="/flyer-generator" class="regen-btn">
+      <svg><use href="#icon-regen"/></svg>
+      Generate new flyers
+    </a>
+  </div>
+
+  {% if generated < total and generated > 0 %}
+  <div class="fail-note">
+    {{ total - generated }} style{{ 's' if (total - generated) > 1 else '' }} failed to generate — you can regenerate below.
+  </div>
+  {% endif %}
+
+  {% if flyers %}
+  <div class="flyer-grid">
+    {% for flyer in flyers %}
+
+      {% if flyer.url %}
+      <div class="flyer-card">
+        <div class="flyer-image-wrap">
+          <img src="{{ flyer.url }}" alt="{{ flyer.style }}"/>
+        </div>
+        <div class="flyer-body">
+          <div>
+            <p class="style-label">Style</p>
+            <p class="style-name">{{ flyer.style }}</p>
+          </div>
+          <div class="action-row">
+            <a class="action-btn" href="{{ flyer.url }}" download target="_blank">
+              <svg><use href="#icon-download"/></svg>&#8203; Download
+            </a>
+            <button class="action-btn" type="button">
+              <svg><use href="#icon-fix"/></svg>&#8203; Fix Text (PIL)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {% else %}
+      <div class="flyer-card failed">
+        <div class="flyer-image-wrap">
+          <div class="flyer-error-placeholder">
+            <svg><use href="#icon-alert"/></svg>
+            Generation failed for this style
+          </div>
+        </div>
+        <div class="flyer-body">
+          <div>
+            <p class="style-label">Style</p>
+            <p class="style-name failed-label">{{ flyer.style }}</p>
+          </div>
+          <div class="action-row">
+            <button class="action-btn" type="button" disabled>
+              <svg><use href="#icon-download"/></svg>&#8203; Download
+            </button>
+            <button class="action-btn" type="button" disabled>
+              <svg><use href="#icon-fix"/></svg>&#8203; Fix Text (PIL)
+            </button>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <h2>No flyers generated</h2>
+    <p>All generation attempts failed. Please try again.</p>
+  </div>
+  {% endif %}
+
+  <!-- Generate Again -->
+  <div class="bottom-bar">
+    <a href="/flyer-generator" class="regen-btn">
+      <svg><use href="#icon-regen"/></svg>
+      Generate Again
+    </a>
+  </div>
+
+</div>
+</body>
+</html>

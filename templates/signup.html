@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BrandSnap AI — Sign Up</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --black: #0a0a0a;
+        --white: #f5f2eb;
+        --accent: #d4ff00;
+        --mid: #1e1e1e;
+        --border: #2e2e2e;
+        --muted: #666;
+        --error: #ff4444;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        background-color: var(--black);
+        color: var(--white);
+        font-family: "DM Mono", monospace;
+        display: flex;
+        min-height: 100vh;
+        cursor: crosshair;
+      }
+
+      /* ── Left Panel ── */
+      .panel-left {
+        width: 42%;
+        background-color: var(--accent);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 3rem;
+        position: relative;
+        overflow: hidden;
+        animation: slideInLeft 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+
+      @keyframes slideInLeft {
+        from {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .panel-left::before {
+        content: "";
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 300px;
+        height: 300px;
+        border: 2px solid var(--black);
+        border-radius: 50%;
+        opacity: 0.15;
+      }
+
+      .panel-left::after {
+        content: "";
+        position: absolute;
+        bottom: 60px;
+        left: -40px;
+        width: 180px;
+        height: 180px;
+        border: 2px solid var(--black);
+        border-radius: 50%;
+        opacity: 0.1;
+      }
+
+      .brand {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: 1.1rem;
+        color: var(--black);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+
+      .tagline-block {
+        z-index: 1;
+      }
+
+      .tagline-block h1 {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: clamp(2.4rem, 3.5vw, 3.2rem);
+        line-height: 1.05;
+        color: var(--black);
+        text-transform: uppercase;
+        letter-spacing: -0.02em;
+      }
+
+      .tagline-block h1 span {
+        display: block;
+      }
+
+      .tagline-block p {
+        margin-top: 1.4rem;
+        font-size: 0.78rem;
+        color: var(--black);
+        opacity: 0.6;
+        line-height: 1.7;
+        max-width: 260px;
+      }
+
+      .left-footer {
+        font-size: 0.68rem;
+        color: var(--black);
+        opacity: 0.45;
+        letter-spacing: 0.05em;
+        z-index: 1;
+      }
+
+      /* ── Right Panel ── */
+      .panel-right {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 4rem;
+        animation: fadeUp 0.8s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+
+      @keyframes fadeUp {
+        from {
+          transform: translateY(30px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .form-container {
+        width: 100%;
+        max-width: 420px;
+      }
+
+      .form-header {
+        margin-bottom: 2.8rem;
+      }
+
+      .form-header .eyebrow {
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 0.6rem;
+      }
+
+      .form-header h2 {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: 2rem;
+        letter-spacing: -0.02em;
+        color: var(--white);
+      }
+
+      /* ── Form Fields ── */
+      .field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .field {
+        margin-bottom: 1.2rem;
+        position: relative;
+      }
+
+      .field label {
+        display: block;
+        font-size: 0.68rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 0.45rem;
+        transition: color 0.2s;
+      }
+
+      .field:focus-within label {
+        color: var(--accent);
+      }
+
+      .field input {
+        width: 100%;
+        background: var(--mid);
+        border: 1px solid var(--border);
+        color: var(--white);
+        font-family: "DM Mono", monospace;
+        font-size: 0.88rem;
+        padding: 0.75rem 1rem;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      .field input::placeholder {
+        color: #444;
+      }
+
+      .field input:focus {
+        border-color: var(--accent);
+        background: #161616;
+      }
+
+      .field input:focus + .focus-bar {
+        transform: scaleX(1);
+      }
+
+      .focus-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.25s ease;
+      }
+
+      /* Checkbox */
+      .checkbox-field {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 1.8rem;
+        cursor: pointer;
+      }
+
+      .checkbox-field input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        min-width: 16px;
+        border: 1px solid var(--border);
+        background: var(--mid);
+        cursor: pointer;
+        position: relative;
+        margin-top: 2px;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+      }
+
+      .checkbox-field input[type="checkbox"]:checked {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .checkbox-field input[type="checkbox"]:checked::after {
+        content: "✓";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 10px;
+        color: var(--black);
+        font-weight: bold;
+      }
+
+      .checkbox-field span {
+        font-size: 0.72rem;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .checkbox-field span a {
+        color: var(--white);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      /* Submit Button */
+      .btn-submit {
+        width: 100%;
+        padding: 1rem;
+        background: var(--accent);
+        color: var(--black);
+        border: none;
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        font-size: 0.9rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition:
+          background 0.2s,
+          transform 0.1s;
+      }
+
+      .btn-submit:hover {
+        background: #c8f000;
+      }
+
+      .btn-submit:active {
+        transform: scale(0.98);
+      }
+
+      .btn-submit::after {
+        content: "→";
+        margin-left: 0.5rem;
+        display: inline-block;
+        transition: transform 0.2s;
+      }
+
+      .btn-submit:hover::after {
+        transform: translateX(4px);
+      }
+
+      /* Sign in link */
+      .signin-link {
+        text-align: center;
+        margin-top: 1.6rem;
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
+
+      .signin-link a {
+        color: var(--white);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+
+      /* Divider */
+      .divider {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin: 1.6rem 0;
+      }
+
+      .divider::before,
+      .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+
+      .divider span {
+        font-size: 0.65rem;
+        color: var(--muted);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        body {
+          flex-direction: column;
+        }
+
+        .panel-left {
+          width: 100%;
+          padding: 2rem;
+          min-height: 220px;
+          animation: none;
+        }
+
+        .tagline-block h1 {
+          font-size: 2rem;
+        }
+        .tagline-block p {
+          display: none;
+        }
+
+        .panel-right {
+          padding: 2.5rem 1.5rem;
+          align-items: flex-start;
+        }
+
+        .field-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Left Panel -->
+    <div class="panel-left">
+      <div class="brand">◆ BrandSnap AI</div>
+
+      <div class="tagline-block">
+        <h1>
+          <span>Work</span>
+          <span>Without</span>
+          <span>Limits.</span>
+        </h1>
+        <p>Your Reliable AI Assistant.</p>
+      </div>
+
+      <div class="left-footer">© 2026 BrandSnap AI — All rights reserved</div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="panel-right">
+      <div class="form-container">
+        <div class="form-header">
+          <div class="eyebrow">— Get started</div>
+          <h2>Create your account</h2>
+        </div>
+
+        <!-- 
+        Flask integration:
+          action  → your Flask route e.g. action="/signup"
+          method  → POST so form data is sent in the request body
+          id      → used by JS for client-side validation before submit
+      -->
+        <form id="signupForm" action="/signup" method="POST" novalidate>
+
+          {% if error %}
+          <div class="error-msg">{{ error }}</div>
+          {% endif %}
+
+          <div class="field-row">
+            <div class="field">
+              <label for="fname">First name</label>
+              <!-- name="fname" → access in Flask via request.form['fname'] -->
+              <input
+                type="text"
+                id="fname"
+                name="fname"
+                placeholder="Emmanuel"
+                autocomplete="given-name"
+                required
+              />
+              <div class="focus-bar"></div>
+            </div>
+            <div class="field">
+              <label for="lname">Last name</label>
+              <!-- name="lname" → request.form['lname'] -->
+              <input
+                type="text"
+                id="lname"
+                name="lname"
+                placeholder="Doe"
+                autocomplete="family-name"
+                required
+              />
+              <div class="focus-bar"></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="email">Email address</label>
+            <!-- name="email" → request.form['email'] -->
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
+            />
+            <div class="focus-bar"></div>
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <!-- name="password" → request.form['password'] -->
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Min. 8 characters"
+              required
+            />
+            <div class="focus-bar"></div>
+          </div>
+
+          <div class="field">
+            <label for="confirm">Confirm password</label>
+            <!-- name="confirm" → request.form['confirm'] — validate match server-side too -->
+            <input
+              type="password"
+              id="confirm"
+              name="confirm"
+              placeholder="Repeat your password"
+              required
+            />
+            <div class="focus-bar"></div>
+          </div>
+
+          <label class="checkbox-field">
+            <!-- name="terms" → request.form.get('terms') returns 'on' if checked, None if not -->
+            <input type="checkbox" id="terms" name="terms" required />
+            <span
+              >I agree to the <a href="#">Terms of Service</a> and
+              <a href="#">Privacy Policy</a></span
+            >
+          </label>
+
+          <!-- type="submit" triggers form POST to action="/signup" -->
+          <button type="submit" id="submitBtn" class="btn-submit">
+            Create Account
+          </button>
+        </form>
+
+        <div class="signin-link">
+          Already have an account? <a href="/login">Sign in</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

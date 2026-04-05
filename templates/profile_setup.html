@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BrandSnap AI - Business Profile</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=DM+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: #0e0e0e;
+        color: #f0f0f0;
+        font-family: "Syne", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 560px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 2.5rem;
+      }
+
+      .brand-logo {
+        width: 36px;
+        height: 36px;
+        background-color: #c8ff00;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .brand-logo svg {
+        width: 20px;
+        height: 20px;
+      }
+      .brand-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #f0f0f0;
+        letter-spacing: -0.02em;
+      }
+
+      .steps {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 2rem;
+      }
+      .step {
+        height: 4px;
+        width: 28px;
+        border-radius: 2px;
+        background-color: #2a2a2a;
+      }
+      .step.done {
+        background-color: #c8ff00;
+      }
+      .step.active {
+        background-color: #c8ff00;
+        opacity: 0.5;
+      }
+
+      .header {
+        margin-bottom: 2rem;
+      }
+
+      .header h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #f0f0f0;
+        letter-spacing: -0.03em;
+        line-height: 1.2;
+        margin-bottom: 0.5rem;
+      }
+
+      .header h1 span {
+        color: #c8ff00;
+      }
+
+      .header p {
+        font-family: "DM Mono", monospace;
+        font-size: 0.78rem;
+        color: #555;
+        line-height: 1.6;
+      }
+
+      .card {
+        background-color: #141414;
+        border: 1px solid #222;
+        border-radius: 16px;
+        padding: 2rem;
+      }
+
+      .form-row {
+        margin-bottom: 1.5rem;
+      }
+
+      label {
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #aaa;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+      }
+
+      input[type="text"],
+      select,
+      textarea {
+        width: 100%;
+        background-color: #0e0e0e;
+        border: 1px solid #2a2a2a;
+        border-radius: 10px;
+        color: #f0f0f0;
+        font-family: "DM Mono", monospace;
+        font-size: 0.88rem;
+        padding: 0.75rem 1rem;
+        outline: none;
+        transition: border-color 0.15s;
+        appearance: none;
+        -webkit-appearance: none;
+      }
+
+      input[type="text"]:focus,
+      select:focus,
+      textarea:focus {
+        border-color: #c8ff00;
+      }
+      input[type="text"]::placeholder,
+      textarea::placeholder {
+        color: #3a3a3a;
+      }
+
+      .select-wrap {
+        position: relative;
+      }
+
+      .select-wrap::after {
+        content: "";
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid #555;
+        pointer-events: none;
+      }
+
+      select option {
+        background-color: #141414;
+        color: #f0f0f0;
+      }
+      textarea {
+        resize: vertical;
+        min-height: 100px;
+        line-height: 1.6;
+      }
+
+      .tone-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .tone-option {
+        position: relative;
+      }
+      .tone-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .tone-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0.65rem 0.9rem;
+        background-color: #0e0e0e;
+        border: 1px solid #2a2a2a;
+        border-radius: 10px;
+        cursor: pointer;
+        transition:
+          border-color 0.15s,
+          background-color 0.15s;
+        font-family: "DM Mono", monospace;
+        font-size: 0.78rem;
+        color: #888;
+      }
+
+      .tone-label:hover {
+        border-color: #444;
+        color: #ccc;
+      }
+
+      .tone-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        border: 1px solid #444;
+        flex-shrink: 0;
+        transition:
+          background-color 0.15s,
+          border-color 0.15s;
+      }
+
+      .tone-option input[type="radio"]:checked + .tone-label {
+        border-color: #c8ff00;
+        background-color: rgba(200, 255, 0, 0.05);
+        color: #c8ff00;
+      }
+
+      .tone-option input[type="radio"]:checked + .tone-label .tone-dot {
+        background-color: #c8ff00;
+        border-color: #c8ff00;
+      }
+
+      .divider {
+        height: 1px;
+        background-color: #1e1e1e;
+        margin: 1.5rem 0;
+      }
+
+      .submit-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        margin-top: 1.5rem;
+        padding: 0.9rem;
+        background-color: #c8ff00;
+        color: #0e0e0e;
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition:
+          opacity 0.15s,
+          transform 0.1s;
+      }
+
+      .submit-btn:hover {
+        opacity: 0.88;
+      }
+      .submit-btn:active {
+        transform: scale(0.99);
+      }
+      .submit-btn svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .footer-note {
+        text-align: center;
+        margin-top: 1.2rem;
+        font-family: "DM Mono", monospace;
+        font-size: 0.72rem;
+        color: #3a3a3a;
+      }
+
+      .footer-note a {
+        color: #555;
+        text-decoration: none;
+        border-bottom: 1px solid #333;
+      }
+      .footer-note a:hover {
+        color: #c8ff00;
+        border-bottom-color: #c8ff00;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect x="2" y="2" width="7" height="7" rx="2" fill="#0e0e0e" />
+            <rect x="11" y="2" width="7" height="7" rx="2" fill="#0e0e0e" />
+            <rect x="2" y="11" width="7" height="7" rx="2" fill="#0e0e0e" />
+            <circle cx="14.5" cy="14.5" r="3.5" fill="#0e0e0e" />
+          </svg>
+        </div>
+        <span class="brand-name">BrandSnap AI</span>
+      </div>
+
+      <div class="steps">
+        <div class="step done"></div>
+        <div class="step done"></div>
+        <div class="step active"></div>
+        <div class="step"></div>
+      </div>
+
+      <div class="header">
+        <h1>Tell us about your <span>business</span></h1>
+        <p>We'll use this to generate posts that actually sound like you.</p>
+      </div>
+
+      <div class="card">
+        <form method="POST" action="/profile_setup">
+          <div class="form-row">
+            <label for="business_name">Business name</label>
+            <input
+              type="text"
+              id="business_name"
+              name="business_name"
+              placeholder="e.g. Sunny Bakery"
+              required
+            />
+          </div>
+
+          <div class="form-row">
+            <label for="industry">Industry</label>
+            <div class="select-wrap">
+              <select id="industry" name="industry" required>
+                <option value="" disabled selected>Select your industry</option>
+                <option value="Food and Beverage">Food and Beverage</option>
+                <option value="Fashion and Apparel">Fashion and Apparel</option>
+                <option value="Health and Wellness">Health and Wellness</option>
+                <option value="Technology">Technology</option>
+                <option value="Real Estate">Real Estate</option>
+                <option value="Education">Education</option>
+                <option value="Beauty and Cosmetics">
+                  Beauty and Cosmetics
+                </option>
+                <option value="Finance">Finance</option>
+                <option value="Travel and Tourism">Travel and Tourism</option>
+                <option value="Retail">Retail</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="form-row">
+            <label>Brand tone</label>
+            <div class="tone-grid">
+              <div class="tone-option">
+                <input
+                  type="radio"
+                  id="t1"
+                  name="tone"
+                  value="Professional and Formal"
+                />
+                <label class="tone-label" for="t1"
+                  ><span class="tone-dot"></span> Professional</label
+                >
+              </div>
+              <div class="tone-option">
+                <input
+                  type="radio"
+                  id="t2"
+                  name="tone"
+                  value="Friendly and Warm"
+                />
+                <label class="tone-label" for="t2"
+                  ><span class="tone-dot"></span> Friendly and Warm</label
+                >
+              </div>
+              <div class="tone-option">
+                <input
+                  type="radio"
+                  id="t3"
+                  name="tone"
+                  value="Fun and Playful"
+                />
+                <label class="tone-label" for="t3"
+                  ><span class="tone-dot"></span> Fun and Playful</label
+                >
+              </div>
+              <div class="tone-option">
+                <input
+                  type="radio"
+                  id="t4"
+                  name="tone"
+                  value="Bold and Energetic"
+                />
+                <label class="tone-label" for="t4"
+                  ><span class="tone-dot"></span> Bold and Energetic</label
+                >
+              </div>
+              <div class="tone-option">
+                <input
+                  type="radio"
+                  id="t5"
+                  name="tone"
+                  value="Calm and Minimalist"
+                />
+                <label class="tone-label" for="t5"
+                  ><span class="tone-dot"></span> Calm and Minimal</label
+                >
+              </div>
+              <div class="tone-option">
+                <input type="radio" id="t6" name="tone" value="Inspirational" />
+                <label class="tone-label" for="t6"
+                  ><span class="tone-dot"></span> Inspirational</label
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="form-row">
+            <label for="target_audience">Target audience</label>
+            <textarea
+              id="target_audience"
+              name="target_audience"
+              placeholder="e.g. Young professionals aged 25-35 interested in healthy eating"
+              required
+            ></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            Continue to dashboard
+            <svg
+              viewBox="0 0 16 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M3 8h10M9 4l4 4-4 4"
+                stroke="#0e0e0e"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      <p class="footer-note">
+        <a href="/dashboard">Skip for now</a> - you can always update this later
+      </p>
+    </div>
+  </body>
+</html>

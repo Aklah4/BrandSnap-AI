@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BrandSnap AI — AI Instagram Content for Small Businesses</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --black:  #0a0a0a;
+      --white:  #f5f2eb;
+      --accent: #d4ff00;
+      --mid:    #141414;
+      --card:   #111111;
+      --border: #222;
+      --muted:  #555;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--black);
+      color: var(--white);
+      font-family: 'Syne', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── Utilities ── */
+    .mono { font-family: 'DM Mono', monospace; }
+    .accent { color: var(--accent); }
+
+    /* ── Nav ── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    .nav.scrolled {
+      background: rgba(10, 10, 10, 0.92);
+      backdrop-filter: blur(12px);
+      border-color: var(--border);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo {
+      width: 32px; height: 32px;
+      background: var(--accent);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .nav-logo svg { width: 18px; height: 18px; }
+
+    .nav-wordmark {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
+
+    .nav-actions { display: flex; align-items: center; gap: 1rem; }
+
+    .btn-ghost {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .btn-ghost:hover { color: var(--white); border-color: var(--border); }
+
+    .btn-cta {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: var(--black);
+      background: var(--accent);
+      text-decoration: none;
+      padding: 0.55rem 1.3rem;
+      border-radius: 8px;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn-cta:hover { background: #c8f000; }
+    .btn-cta:active { transform: scale(0.97); }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* background grid */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(212,255,0,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212,255,0,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+    }
+
+    /* glow blob */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 20%; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(212,255,0,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .hero-title {
+      font-size: clamp(3rem, 7vw, 6.5rem);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -0.04em;
+      max-width: 900px;
+      position: relative;
+    }
+
+    .hero-title .line-accent { color: var(--accent); }
+
+    .hero-sub {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 500px;
+      margin: 2rem auto 0;
+      position: relative;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2.5rem;
+      position: relative;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-hero {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--black);
+      background: var(--accent);
+      text-decoration: none;
+      padding: 0.85rem 2.2rem;
+      border-radius: 10px;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-hero:hover { background: #c8f000; }
+    .btn-hero:active { transform: scale(0.97); }
+
+    .btn-hero-ghost {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 0.85rem 1.8rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .btn-hero-ghost:hover { color: var(--white); border-color: #444; }
+
+    .hero-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: #333;
+      margin-top: 1.2rem;
+      position: relative;
+    }
+
+    /* ── Preview strip ── */
+    .preview-strip {
+      padding: 0 2rem 6rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .preview-frame {
+      background: var(--mid);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      max-width: 900px;
+      width: 100%;
+      padding: 2rem;
+    }
+
+    .preview-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 1.5rem;
+    }
+
+    .preview-bar span {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+
+    .preview-bar span:first-child  { background: #ff5f57; }
+    .preview-bar span:nth-child(2) { background: #febc2e; }
+    .preview-bar span:nth-child(3) { background: #28c840; }
+
+    .preview-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .preview-card {
+      background: #0e0e0e;
+      border: 1px solid #1a1a1a;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .preview-img {
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #1a1a1a 0%, #222 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .preview-img-icon {
+      width: 32px; height: 32px;
+      opacity: 0.15;
+    }
+
+    .preview-card-body { padding: 0.75rem; }
+
+    .preview-caption-line {
+      height: 6px;
+      background: #1e1e1e;
+      border-radius: 3px;
+      margin-bottom: 5px;
+    }
+
+    .preview-caption-line.short { width: 60%; }
+
+    .preview-tags {
+      display: flex;
+      gap: 4px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preview-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--accent);
+      background: rgba(212,255,0,0.07);
+      border: 1px solid rgba(212,255,0,0.12);
+      border-radius: 4px;
+      padding: 2px 6px;
+    }
+
+    /* ── Section shared ── */
+    .section {
+      padding: 6rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      max-width: 600px;
+    }
+
+    /* ── How it works ── */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3.5rem;
+    }
+
+    .step-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+
+    .step-card:hover { border-color: #333; }
+
+    .step-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      margin-bottom: 1.2rem;
+    }
+
+    .step-icon {
+      width: 40px; height: 40px;
+      background: rgba(212,255,0,0.08);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.2rem;
+    }
+
+    .step-icon svg { width: 20px; height: 20px; color: var(--accent); }
+
+    .step-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      letter-spacing: -0.02em;
+    }
+
+    .step-card p {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── Features ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-top: 3.5rem;
+    }
+
+    .feature {
+      background: var(--card);
+      padding: 2.2rem;
+      transition: background 0.15s;
+    }
+
+    .feature:hover { background: #131313; }
+
+    .feature-icon {
+      width: 36px; height: 36px;
+      background: rgba(212,255,0,0.08);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.2rem;
+    }
+
+    .feature-icon svg { width: 18px; height: 18px; color: var(--accent); }
+
+    .feature h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .feature p {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.73rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── CTA banner ── */
+    .cta-section {
+      padding: 4rem 2rem 8rem;
+    }
+
+    .cta-banner {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: var(--accent);
+      border-radius: 20px;
+      padding: 5rem 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 250px; height: 250px;
+      border: 2px solid rgba(0,0,0,0.08);
+      border-radius: 50%;
+    }
+
+    .cta-banner::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: -40px;
+      width: 180px; height: 180px;
+      border: 2px solid rgba(0,0,0,0.06);
+      border-radius: 50%;
+    }
+
+    .cta-banner h2 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 800;
+      color: var(--black);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      max-width: 600px;
+      position: relative;
+    }
+
+    .cta-banner p {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      color: rgba(0,0,0,0.55);
+      margin-top: 1rem;
+      max-width: 420px;
+      line-height: 1.7;
+      position: relative;
+    }
+
+    .btn-cta-dark {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--accent);
+      background: var(--black);
+      text-decoration: none;
+      padding: 0.9rem 2.4rem;
+      border-radius: 10px;
+      margin-top: 2.5rem;
+      position: relative;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn-cta-dark:hover { background: #111; }
+    .btn-cta-dark:active { transform: scale(0.97); }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .footer-logo {
+      width: 26px; height: 26px;
+      background: var(--accent);
+      border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .footer-logo svg { width: 14px; height: 14px; }
+
+    .footer-wordmark {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
+
+    footer p {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: #333;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .nav { padding: 1rem 1.5rem; }
+      .preview-cards { grid-template-columns: repeat(2, 1fr); }
+      .preview-cards .preview-card:last-child { display: none; }
+      .cta-banner { padding: 3rem 2rem; }
+      footer { padding: 1.5rem; }
+    }
+
+    @media (max-width: 480px) {
+      .nav-actions .btn-ghost { display: none; }
+      .preview-cards { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav" id="nav">
+    <a href="/" class="nav-brand">
+      <div class="nav-logo">
+        <svg viewBox="0 0 20 20" fill="none">
+          <rect x="2" y="2" width="7" height="7" rx="2" fill="#0a0a0a"/>
+          <rect x="11" y="2" width="7" height="7" rx="2" fill="#0a0a0a"/>
+          <rect x="2" y="11" width="7" height="7" rx="2" fill="#0a0a0a"/>
+          <circle cx="14.5" cy="14.5" r="3.5" fill="#0a0a0a"/>
+        </svg>
+      </div>
+      <span class="nav-wordmark">BrandSnap AI</span>
+    </a>
+    <div class="nav-actions">
+      <a href="/login" class="btn-ghost">Sign in</a>
+      <a href="/signup" class="btn-cta">Get started free</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <p class="hero-eyebrow mono">AI-powered Instagram content</p>
+    <h1 class="hero-title">
+      Your weekly posts,<br/>
+      <span class="line-accent">written in seconds.</span>
+    </h1>
+    <p class="hero-sub">
+      Tell us about your business once. BrandSnap AI generates 5 ready-to-post Instagram captions, hashtags, and images every week — tailored to your brand.
+    </p>
+    <div class="hero-actions">
+      <a href="/signup" class="btn-hero">Start for free</a>
+      <a href="#how-it-works" class="btn-hero-ghost">See how it works</a>
+    </div>
+    <p class="hero-note mono">No credit card required &nbsp;·&nbsp; Ready in under 2 minutes</p>
+  </section>
+
+  <!-- Dashboard preview -->
+  <div class="preview-strip">
+    <div class="preview-frame">
+      <div class="preview-bar">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="preview-cards">
+        <!-- Card 1 -->
+        <div class="preview-card">
+          <div class="preview-img">
+            <svg class="preview-img-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="3"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path d="M21 15l-5-5L5 21"/>
+            </svg>
+          </div>
+          <div class="preview-card-body">
+            <div class="preview-caption-line"></div>
+            <div class="preview-caption-line short"></div>
+            <div class="preview-tags">
+              <span class="preview-tag">#bakery</span>
+              <span class="preview-tag">#fresh</span>
+              <span class="preview-tag">#local</span>
+            </div>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="preview-card">
+          <div class="preview-img">
+            <svg class="preview-img-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="3"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path d="M21 15l-5-5L5 21"/>
+            </svg>
+          </div>
+          <div class="preview-card-body">
+            <div class="preview-caption-line"></div>
+            <div class="preview-caption-line short"></div>
+            <div class="preview-tags">
+              <span class="preview-tag">#morning</span>
+              <span class="preview-tag">#coffee</span>
+              <span class="preview-tag">#vibes</span>
+            </div>
+          </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="preview-card">
+          <div class="preview-img">
+            <svg class="preview-img-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="3"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path d="M21 15l-5-5L5 21"/>
+            </svg>
+          </div>
+          <div class="preview-card-body">
+            <div class="preview-caption-line"></div>
+            <div class="preview-caption-line short"></div>
+            <div class="preview-tags">
+              <span class="preview-tag">#handmade</span>
+              <span class="preview-tag">#shop</span>
+              <span class="preview-tag">#craft</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="section" id="how-it-works">
+    <p class="section-label">How it works</p>
+    <h2 class="section-title">Three steps to a full week of content</h2>
+
+    <div class="steps">
+      <div class="step-card">
+        <p class="step-num mono">01 —</p>
+        <div class="step-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M10 2a8 8 0 100 16A8 8 0 0010 2z"/>
+            <path d="M10 6v4l3 3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Set up your profile</h3>
+        <p>Enter your business name, industry, tone of voice, and target audience. Takes less than two minutes.</p>
+      </div>
+
+      <div class="step-card">
+        <p class="step-num mono">02 —</p>
+        <div class="step-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 10h14M10 3l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Generate your posts</h3>
+        <p>Click "Generate" and BrandSnap AI uses Claude AI to write captions and hashtags, then creates matching images with DALL-E.</p>
+      </div>
+
+      <div class="step-card">
+        <p class="step-num mono">03 —</p>
+        <div class="step-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="5" width="9" height="9" rx="2"/>
+            <path d="M11 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h1" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Copy and post</h3>
+        <p>One click copies your caption or hashtags. Download your image and paste straight into Instagram. Done.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="section" id="features">
+    <p class="section-label">Features</p>
+    <h2 class="section-title">Everything a small business needs to stay active online</h2>
+
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 4h12v12H4z" rx="2"/>
+            <path d="M8 4v12M4 8h12" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>5 posts per week</h3>
+        <p>A full week of Instagram content generated in one go — captions, hashtags, and images included.</p>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="10" cy="10" r="8"/>
+            <path d="M10 6v4l2.5 2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>On-brand every time</h3>
+        <p>Your tone, audience, and industry are baked into every post. No generic content — it actually sounds like you.</p>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M3 5h14M3 10h14M3 15h8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>AI-written captions</h3>
+        <p>Powered by Claude — one of the most capable language models available. Engaging, natural, platform-ready copy.</p>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="2" width="16" height="16" rx="3"/>
+            <circle cx="7" cy="7" r="1.5"/>
+            <path d="M18 13l-4-4-4 4-2-2-4 4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>AI-generated images</h3>
+        <p>DALL-E 3 creates a unique, professional image for each post — matched to the caption's theme and your brand.</p>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M7 10l3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 4v9M4 16h12" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>One-click copy</h3>
+        <p>Copy your caption or hashtags to the clipboard instantly. No selecting, no formatting — just paste and post.</p>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 4l12 12M16 4L4 16" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Regenerate anytime</h3>
+        <p>Not feeling a set of posts? Hit regenerate and get a completely fresh batch in seconds.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-banner">
+      <h2>Start posting smarter this week.</h2>
+      <p>Set up your profile in two minutes and let BrandSnap AI handle the rest.</p>
+      <a href="/signup" class="btn-cta-dark">Create your free account</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <a href="/" class="footer-brand">
+      <div class="footer-logo">
+        <svg viewBox="0 0 20 20" fill="none">
+          <rect x="2" y="2" width="7" height="7" rx="2" fill="#0a0a0a"/>
+          <rect x="11" y="2" width="7" height="7" rx="2" fill="#0a0a0a"/>
+          <rect x="2" y="11" width="7" height="7" rx="2" fill="#0a0a0a"/>
+          <circle cx="14.5" cy="14.5" r="3.5" fill="#0a0a0a"/>
+        </svg>
+      </div>
+      <span class="footer-wordmark">BrandSnap AI</span>
+    </a>
+    <p class="mono">© 2026 BrandSnap AI. Built for small businesses.</p>
+  </footer>
+
+  <script>
+    // Sticky nav border on scroll
+    var nav = document.getElementById('nav');
+    window.addEventListener('scroll', function() {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    });
+  </script>
+
+</body>
+</html>
