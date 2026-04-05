@@ -215,11 +215,11 @@ def generate():
 
     prompt = f"""You are a social media content creator.
 
-Create 3 Instagram posts for a {industry} business called "{business_name}".
+Create 1 Instagram post for a {industry} business called "{business_name}".
 Target audience: {target_audience}
 Tone: {tone}
 
-Return ONLY a valid JSON array (no markdown, no explanation) with exactly 3 objects.
+Return ONLY a valid JSON array (no markdown, no explanation) with exactly 1 object.
 Each object must have these exact keys:
 - "caption": 2-3 sentence post caption
 - "hashtags": array of exactly 5 hashtag strings, each starting with #
