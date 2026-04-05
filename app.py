@@ -61,8 +61,6 @@ def login_required(f):
 # ── Root ──────────────────────────────────────────────────────────────────────
 @app.route('/')
 def index():
-    if session.get('email'):
-        return redirect(url_for('dashboard'))
     return render_template('index.html')
 
 
